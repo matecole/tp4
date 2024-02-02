@@ -1,0 +1,108 @@
+#Matias Fernandez
+#2024-02-01
+
+import arcade 
+import random 
+
+SCREEN_W = 800 # largeur de l'ecran
+SCREEN_H = 600 # hauteur de l'ecran
+
+COLORS = [arcade.color.RED, arcade.color.BLUE, arcade.color.GREEN, arcade.color.YELLOW, arcade.color.WHITE, arcade.color.PURPLE, arcade.color.ORANGE, arcade.color.PINK, arcade.color.TEAL, arcade.color.TURQUOISE]
+
+class Circle:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.changex = random.randint(1,8) 
+        self.changey = random.randint(1,8)
+        self.color = random.choice(COLORS)
+        self.radius = random.randint(10,30)
+
+    def update(self): # inverser la direction si le cercle atteint les bords de l'ecran, pour que le cercle reste dans l'ecran
+        self.x += self.changex
+        self.y += self.changey
+
+        if self.x < self.radius:
+            self.changex *= -1
+        elif self.x > SCREEN_W - self.radius:
+            self.changex *= -1
+        
+        if self.y < self.radius:
+            self.changey *= -1
+        elif self.y > SCREEN_H - self.radius:
+            self.changey *= -1
+
+    def draw(self): # dessine le cercle
+        arcade.draw_circle_filled(self.x, self.y, self.radius, self.color)
+
+class Rectangle:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.changex = random.randint(1,8)
+        self.changey = random.randint(1,8)
+        self.color = random.choice(COLORS)
+        self.height = random.randint(10, 30)
+        self.width = random.randint(10, 30)
+        self.angle = random.randint(0, 360)
+
+    def update(self): # inverser la direction si le rectangle atteint les bords de l'ecran, pour que le rectangle reste dans l'ecran
+        self.x += self.changex
+        self.y += self.changey
+
+        if self.x < self.width:
+            self.changex *= -1
+        elif self.x > SCREEN_W - self.width:
+            self.changex *= -1
+        
+        if self.y < self.height:
+            self.changey *= -1
+        elif self.y > SCREEN_H - self.height:
+            self.changey *= -1
+
+    def draw(self): # dessine le rectangle
+        arcade.draw_rectangle_filled(self.x, self.y, self.width, self.height, self.color, self.angle)
+
+class MyGame(arcade.Window):
+    def __init__(self):
+        super().__init__(SCREEN_W, SCREEN_H, "tp4")
+
+        self.circleslist = []
+        self.rectangleslist = []
+
+    def setup(self):
+        pass
+
+    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int): # faire que quand tu clic avec ton bouton gauche, ca fait un cercle, et le bouton droite fait un rectangle
+        if button == arcade.MOUSE_BUTTON_LEFT:
+            circle = Circle(x,y)
+            self.circleslist.append(circle)
+
+        elif button == arcade.MOUSE_BUTTON_RIGHT:
+            rectangle = Rectangle(x,y)
+            self.rectangleslist.append(rectangle)
+
+    def on_draw(self): # dessine les cercles et les rectangles
+        arcade.start_render()
+
+        for circle in self.circleslist:
+            circle.draw()
+
+        for rectangle in self.rectangleslist:
+            rectangle.draw()
+
+    def on_update(self, delta_time: float):
+        for circle in self.circleslist:
+            circle.update()
+
+        for rectangle in self.rectangleslist:
+            rectangle.update()
+
+def main():
+    my_game = MyGame()
+    my_game.setup()
+    
+    arcade.run()
+
+
+main()
